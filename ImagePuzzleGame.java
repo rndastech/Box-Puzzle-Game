@@ -70,15 +70,16 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     private void loadImages() {
         try {
             for (int i = 0; i < 9; i++) {
-                imageParts[i] = ImageIO.read(new File("C:/Users/rites/Downloads/imgrnd" + (i + 1) + ".jpg"));
+                imageParts[i] = ImageIO.read(getClass().getResource("/Assets/Images/Hard/imgrnd" + (i + 1) + ".jpg"));
             }
-            emptyImg[0] = ImageIO.read(new File("C:/Users/rites/Downloads/imgrnd" + (10) + ".jpg"));
-        } catch (IOException e) {
+            emptyImg[0] = ImageIO.read(getClass().getResource("/Assets/Images/question.jpg"));
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error loading images. Please check the file paths.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
     }
+    
 
     private void initializeButtons() {
         for (int i = 0; i < 3; i++) {
