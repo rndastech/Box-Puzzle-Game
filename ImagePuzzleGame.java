@@ -3,6 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import javax.swing.border.EmptyBorder;
 import java.io.File;
 import java.io.IOException;
 
@@ -11,6 +12,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     JPanel p2;
     JButton re;
     JButton resignButton;
+    JButton backButton;
     JButton[][] b = new JButton[3][3];
     int[][] ar = new int[3][3];
     JLabel l1;
@@ -23,18 +25,21 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     final Color EMPTY_COLOR = new Color(200, 200, 200);
     boolean gameActive = false;
     String level;
-    ImagePuzzleGame(String l) {
+
+    public ImagePuzzleGame(String l) {
         super("9 Box Image Puzzle");
         moves = 0;
         level = l;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JOptionPane.showMessageDialog(this, "ABOUT\n\nThe 9-box image puzzle consists of a 3x3 grid of image parts with one part missing. The parts are jumbled when the puzzle starts and the goal is to reconstruct the original image by sliding the parts.", "9 Box Image Puzzle", JOptionPane.INFORMATION_MESSAGE);
-
         String name = JOptionPane.showInputDialog(this, "RULES\nTo move: If there is an empty adjacent square next to a tile, a tile may be slid into the empty location.\nTo win: The image parts must be moved back into their original positions.\n\nEnter your name:", "9 Box Image Puzzle", JOptionPane.QUESTION_MESSAGE);
 
-        setSize(600, 700);
+        setSize(1024, 768);
         setLayout(new BorderLayout());
+
+        // Set the background image to the same as the home screen
+        BackgroundPanel backgroundPanel = new BackgroundPanel("images/background.jpg");
+        setContentPane(backgroundPanel);
 
         p1 = new JPanel(new FlowLayout());
         p2 = new JPanel(new GridLayout(3, 3, 2, 2)); // Remove grid gaps
@@ -52,6 +57,10 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         resignButton.addActionListener(this);
         resignButton.setEnabled(false);
 
+        backButton = new JButton("Back");
+        backButton.addActionListener(this);
+
+        p1.add(backButton);
         p1.add(re);
         p1.add(resignButton);
         p1.add(l2);
@@ -86,7 +95,8 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 b[i][j] = new JButton();
-                b[i][j].setBorderPainted(false);
+                b[i][j].setBorderPainted(true);
+                b[i][j].setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
                 b[i][j].setContentAreaFilled(false);
                 b[i][j].addActionListener(this);
                 p2.add(b[i][j]);
@@ -120,6 +130,9 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
                 k++;
             }
         }
+
+        // Set the panel spacing
+        p2.setBorder(new EmptyBorder(10, 10, 10, 10));
     }
 
     private boolean isSolvable(int[] arr) {
@@ -143,6 +156,13 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
 
         if (ae.getSource() == resignButton) {
             resignGame();
+            return;
+        }
+
+        if (ae.getSource() == backButton) {
+            // Close the game window and go back to the home screen
+            this.dispose();
+            SwingUtilities.invokeLater(() -> new GameHomepage());
             return;
         }
 
