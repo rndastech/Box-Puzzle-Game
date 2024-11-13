@@ -3,24 +3,23 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * GameRulesPage is the page that displays the rules of the sliding puzzle game.
- */
 public class GameRulesPage extends JFrame {
 
     private JButton backButton;
 
-    /**
-     * Constructor to set up the Game Rules page.
-     */
     public GameRulesPage() {
         setTitle("Game Rules");
-        setSize(800, 600); // Set the window size
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); // Center the window
+        setLocationRelativeTo(null);
 
         // Set a layout for the content
         setLayout(new BorderLayout());
+
+        // === Background Panel ===
+        BackgroundPanel backgroundPanel = new BackgroundPanel("images/background.jpg");
+        backgroundPanel.setLayout(new BorderLayout());
+        setContentPane(backgroundPanel);
 
         // === Header Panel ===
         JPanel headerPanel = new JPanel();
@@ -43,9 +42,9 @@ public class GameRulesPage extends JFrame {
         // Text area to display game rules
         JTextArea textArea = new JTextArea(
                 "The 9-box is a sliding puzzle consisting of a 3x3 grid of numbered boxes with one missing.\n" +
-                "The boxes will be jumbled at the start.\n" +
-                "You have to rearrange them in ascending order.\n" +
-                "Let's see the minimum moves you need!"
+                        "The boxes will be jumbled at the start.\n" +
+                        "You have to rearrange them in ascending order.\n" +
+                        "Let's see the minimum moves you need!"
         );
         textArea.setEditable(false);  // Disable editing
         textArea.setFont(new Font("Arial", Font.PLAIN, 18)); // Use a clean, readable font
@@ -87,13 +86,7 @@ public class GameRulesPage extends JFrame {
         setVisible(true);
     }
 
-    /**
-     * The main method to run the GameRulesPage application.
-     *
-     * @param args Command-line arguments (not used).
-     */
     public static void main(String[] args) {
-        // Ensure the GUI is created on the Event Dispatch Thread
         SwingUtilities.invokeLater(() -> new GameRulesPage());
     }
 }
