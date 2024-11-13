@@ -1,11 +1,12 @@
 import java.awt.*;
+import java.io.*;
+import java.util.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.swing.border.EmptyBorder;
-import java.io.File;
-import java.io.IOException;
+import java.util.List;
 
 public class ImagePuzzleGame extends JFrame implements ActionListener {
     JPanel p1;
@@ -25,11 +26,12 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     final Color EMPTY_COLOR = new Color(200, 200, 200);
     boolean gameActive = false;
     String level;
-
+    String bestScoresFile;
     public ImagePuzzleGame(String l) {
         super("9 Box Image Puzzle");
         moves = 0;
         level = l;
+        bestScoresFile = "Files/"+level+"_lead.txt";
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         String name = JOptionPane.showInputDialog(this, "RULES\nTo move: If there is an empty adjacent square next to a tile, a tile may be slid into the empty location.\nTo win: The image parts must be moved back into their original positions.\n\nEnter your name:", "9 Box Image Puzzle", JOptionPane.QUESTION_MESSAGE);
@@ -135,6 +137,45 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         p2.setBorder(new EmptyBorder(10, 10, 10, 10));
     }
 
+    private void updateBestScores(int currentMoves) {
+        List<Integer> scores = new ArrayList<>();
+
+        // Read existing scores from file
+        try (BufferedReader br = new BufferedReader(new FileReader(bestScoresFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                try {
+                    scores.add(Integer.parseInt(line.trim()));
+                } catch (NumberFormatException e) {
+                    System.err.println("Skipping invalid score entry: " + line);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading best scores file: " + e.getMessage());
+        }
+
+        // Add current score and sort scores
+        scores.add(currentMoves);
+        Collections.sort(scores);
+
+        // Keep only the top 5 scores
+        if (scores.size() > 5) {
+            scores = scores.subList(0, 5);
+        }
+
+        // Write updated scores back to file
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(bestScoresFile))) {
+            for (int score : scores) {
+                bw.write(String.valueOf(score));
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing to best scores file: " + e.getMessage());
+        }
+    }
+
+
+
     private boolean isSolvable(int[] arr) {
         int inversions = 0;
         for (int i = 0; i < arr.length; i++) {
@@ -206,10 +247,13 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         gameActive = false;
         statusLabel.setText("Status: " + status);
         resignButton.setEnabled(false);
+
         if (status.equals("Won")) {
             l1.setText("You Win! In " + moves + " Moves");
+            updateBestScores(moves); // Update best scores
         }
     }
+
 
     private void showSolvedPuzzle() {
         for (int i = 0; i < 3; i++) {

@@ -58,7 +58,7 @@ public class GameHomepage extends JFrame {
         aboutUsButton.addActionListener(e -> openNewWindow("About Us"));
 
         JButton gameRulesButton = createImageButton("images/rules.png");
-        gameRulesButton.addActionListener(e -> openNewWindow("Game Rules"));
+        gameRulesButton.addActionListener(e -> showRules());
 
         JButton achievementsButton = createImageButton("images/achievements.png");
         achievementsButton.addActionListener(e -> openNewWindow("Achievements"));
@@ -132,6 +132,17 @@ public class GameHomepage extends JFrame {
         // Start the game window
         SwingUtilities.invokeLater(() -> {
             ImagePuzzleGame game = new ImagePuzzleGame(difficulty);
+            game.setVisible(true);
+        });
+    }
+
+    private void showRules() {
+        // Close the current window
+        this.dispose();
+
+        // Start the game window
+        SwingUtilities.invokeLater(() -> {
+            GameRulesPage game = new GameRulesPage();
             game.setVisible(true);
         });
     }
