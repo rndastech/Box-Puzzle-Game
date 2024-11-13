@@ -20,6 +20,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     JLabel l2;
     JLabel l3;
     JLabel statusLabel;
+    JLabel bestScoreLabel;
     int moves;
     BufferedImage[] imageParts = new BufferedImage[9];
     BufferedImage[] emptyImg = new BufferedImage[1];
@@ -50,6 +51,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         l1 = new JLabel("    ");
         l2 = new JLabel("Moves: 0");
         l3 = new JLabel("Username: " + name);
+        bestScoreLabel = new JLabel("Best: ");
         statusLabel = new JLabel("Status: Not Started");
 
         re = new JButton("New Game");
@@ -67,6 +69,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         p1.add(resignButton);
         p1.add(l2);
         p1.add(l3);
+        p1.add(bestScoreLabel);
         p1.add(statusLabel);
 
         add(p1, BorderLayout.NORTH);
@@ -91,7 +94,33 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
             System.exit(1);
         }
     }
-    
+
+    private void updateBestScoreLabel() {
+        int bestScore = getBestScore();
+        if (bestScore != Integer.MAX_VALUE) {
+            bestScoreLabel.setText("Best: " + bestScore); // Display the best score if available
+        } else {
+            bestScoreLabel.setText("Best: "); // Display nothing if no score is found
+        }
+    }
+
+    private int getBestScore() {
+        List<Integer> scores = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(bestScoresFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                try {
+                    scores.add(Integer.parseInt(line.trim()));
+                } catch (NumberFormatException e) {
+                    System.err.println("Skipping invalid score entry: " + line);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading best scores file: " + e.getMessage());
+        }
+
+        return scores.isEmpty() ? Integer.MAX_VALUE : Collections.min(scores);
+    }
 
     private void initializeButtons() {
         for (int i = 0; i < 3; i++) {
@@ -172,6 +201,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         } catch (IOException e) {
             System.err.println("Error writing to best scores file: " + e.getMessage());
         }
+        updateBestScoreLabel();
     }
 
 
@@ -233,6 +263,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         l2.setText("Moves: 0");
         l1.setText(" ");
         shufflePuzzle();
+        updateBestScoreLabel();
         gameActive = true;
         statusLabel.setText("Status: Active");
         resignButton.setEnabled(true);
