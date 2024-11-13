@@ -75,13 +75,8 @@ public class GameHomepage extends JFrame {
         topWrapper.add(topPanel);
 
         // === Title Label ===
-        JLabel titleLabel = new JLabel("9-Box Puzzle Game", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEmptyBorder(20, 0, 20, 0),
-                titleLabel.getBorder()
-        ));
+        JLabel titleLabel = new JLabel(new ImageIcon("images/logo.png"));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center the image
 
         // === Center Panel ===
         JPanel centerPanel = new JPanel();
@@ -89,7 +84,7 @@ public class GameHomepage extends JFrame {
         centerPanel.setOpaque(false);
 
         JPanel levelsPanel = new JPanel();
-        levelsPanel.setLayout(new GridLayout(3, 1, 0, 20));
+        levelsPanel.setLayout(new GridLayout(4, 1, 0, 20));
         levelsPanel.setOpaque(false);
 
         // Create and configure level buttons with their respective action listeners
@@ -101,6 +96,10 @@ public class GameHomepage extends JFrame {
 
         JButton hardButton = createImageButton("images/hard.png");
         hardButton.addActionListener(e -> startGame("Hard"));
+
+        JLabel groupNameLabel = new JLabel(new ImageIcon("images/groupName.png"));
+        groupNameLabel.setHorizontalAlignment(SwingConstants.CENTER);  // Center the image
+        levelsPanel.add(groupNameLabel);
 
         levelsPanel.add(easyButton);
         levelsPanel.add(mediumButton);
