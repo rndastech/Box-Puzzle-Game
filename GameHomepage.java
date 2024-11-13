@@ -61,7 +61,7 @@ public class GameHomepage extends JFrame {
         gameRulesButton.addActionListener(e -> showRules());
 
         JButton achievementsButton = createImageButton("images/achievements.png");
-        achievementsButton.addActionListener(e -> openNewWindow("Achievements"));
+        achievementsButton.addActionListener(e -> showAchievements());
 
         // Add buttons in order
         topPanel.add(leaderboardButton);
@@ -131,7 +131,7 @@ public class GameHomepage extends JFrame {
 
         // Start the game window
         SwingUtilities.invokeLater(() -> {
-            ImagePuzzleGame game = new ImagePuzzleGame(difficulty);
+            ImagePuzzleGame game = new ImagePuzzleGame(difficulty,"Ritesh");
             game.setVisible(true);
         });
     }
@@ -143,6 +143,17 @@ public class GameHomepage extends JFrame {
         // Start the game window
         SwingUtilities.invokeLater(() -> {
             GameRulesPage game = new GameRulesPage();
+            game.setVisible(true);
+        });
+    }
+
+    private void showAchievements() {
+        // Close the current window
+        this.dispose();
+
+        // Start the game window
+        SwingUtilities.invokeLater(() -> {
+            Achievements game = new Achievements();
             game.setVisible(true);
         });
     }

@@ -28,14 +28,14 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     boolean gameActive = false;
     String level;
     String bestScoresFile;
-    public ImagePuzzleGame(String l) {
+    public ImagePuzzleGame(String l, String n) {
         super("9 Box Image Puzzle");
         moves = 0;
         level = l;
         bestScoresFile = "Files/"+level+"_lead.txt";
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        String name = JOptionPane.showInputDialog(this, "RULES\nTo move: If there is an empty adjacent square next to a tile, a tile may be slid into the empty location.\nTo win: The image parts must be moved back into their original positions.\n\nEnter your name:", "9 Box Image Puzzle", JOptionPane.QUESTION_MESSAGE);
+        String name = n;
 
         setSize(1024, 768);
         setLayout(new BorderLayout());
@@ -337,6 +337,6 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new ImagePuzzleGame(args[0]));
+        SwingUtilities.invokeLater(() -> new ImagePuzzleGame(args[0],args[1]));
     }
 }
