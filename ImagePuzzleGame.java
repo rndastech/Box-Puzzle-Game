@@ -22,10 +22,11 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     BufferedImage[] emptyImg = new BufferedImage[1];
     final Color EMPTY_COLOR = new Color(200, 200, 200);
     boolean gameActive = false;
-
-    ImagePuzzleGame() {
+    String level;
+    ImagePuzzleGame(String l) {
         super("9 Box Image Puzzle");
         moves = 0;
+        level = l;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JOptionPane.showMessageDialog(this, "ABOUT\n\nThe 9-box image puzzle consists of a 3x3 grid of image parts with one part missing. The parts are jumbled when the puzzle starts and the goal is to reconstruct the original image by sliding the parts.", "9 Box Image Puzzle", JOptionPane.INFORMATION_MESSAGE);
@@ -70,7 +71,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     private void loadImages() {
         try {
             for (int i = 0; i < 9; i++) {
-                imageParts[i] = ImageIO.read(getClass().getResource("/Assets/Images/Hard/imgrnd" + (i + 1) + ".jpg"));
+                imageParts[i] = ImageIO.read(getClass().getResource("/Assets/Images/"+level+"/imgrnd" + (i + 1) + ".jpg"));
             }
             emptyImg[0] = ImageIO.read(getClass().getResource("/Assets/Images/question.jpg"));
         } catch (IOException | NullPointerException e) {
@@ -241,6 +242,6 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new ImagePuzzleGame());
+        SwingUtilities.invokeLater(() -> new ImagePuzzleGame(args[0]));
     }
 }
