@@ -27,16 +27,41 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     final Color EMPTY_COLOR = new Color(200, 200, 200);
     boolean gameActive = false;
     String level;
+    String player;
     String bestScoresFile;
-    public ImagePuzzleGame(String l, String n) {
+    public ImagePuzzleGame(String l) {
         super("9 Box Image Puzzle");
         moves = 0;
         level = l;
-        bestScoresFile = "Files/"+level+"_lead.txt";
+        bestScoresFile = "Files/"+level+".txt";
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        String n;
+        do {
+            n = JOptionPane.showInputDialog(this, 
+                "RULES\nTo move: If there is an empty adjacent square next to a tile, " +
+                "a tile may be slid into the empty location.\n" +
+                "To win: The image parts must be moved back into their original positions.\n\n" +
+                "Enter your name (single word only):", 
+                "9 Box Image Puzzle", 
+                JOptionPane.QUESTION_MESSAGE);
+            
+            if (n == null) {
+                dispose();
+                new GameHomepage();  // Reopen the main game homepage window
+                return;
+            }
+            n = n.trim();  // Remove leading/trailing spaces
+    
+            if (n.contains(" ")) {
+                JOptionPane.showMessageDialog(this,
+                    "Please enter a single word without spaces",
+                    "Invalid Input",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } while (n.contains(" ") || n.isEmpty());
 
         String name = n;
-
+        player = n;
         setSize(1024, 768);
         setLayout(new BorderLayout());
 
@@ -78,7 +103,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
 
         loadImages();
         initializeButtons();
-
+        updateBestScoreLabel();
         setVisible(true);
     }
 
@@ -96,12 +121,55 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     }
 
     private void updateBestScoreLabel() {
-        int bestScore = getBestScore();
-        if (bestScore != Integer.MAX_VALUE) {
-            bestScoreLabel.setText("Best: " + bestScore); // Display the best score if available
+        Map<String, Integer> scores = readBestScores();
+        if (!scores.isEmpty()) {
+            int bestScore = Collections.min(scores.values());
+            String bestPlayer = "";
+            for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+                if (entry.getValue() == bestScore) {
+                    bestPlayer = entry.getKey();
+                    break;
+                }
+            }
+            bestScoreLabel.setText(String.format("Best: %s (%d moves)", bestPlayer, bestScore));
         } else {
-            bestScoreLabel.setText("Best: "); // Display nothing if no score is found
+            bestScoreLabel.setText("Best: No scores yet");
         }
+    }
+
+    private Map<String, Integer> readBestScores() {
+        Map<String, Integer> scores = new TreeMap<>();
+        File file = new File(bestScoresFile);
+
+        // Create the directory if it doesn't exist
+        file.getParentFile().mkdirs();
+
+        // Create the file if it doesn't exist
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                System.err.println("Error creating score file: " + e.getMessage());
+                return scores;
+            }
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.trim().split(" ");
+                if (parts.length == 2) {
+                    try {
+                        scores.put(parts[0], Integer.parseInt(parts[1]));
+                    } catch (NumberFormatException e) {
+                        System.err.println("Skipping invalid score entry: " + line);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading best scores file: " + e.getMessage());
+        }
+        return scores;
     }
 
     private int getBestScore() {
@@ -112,11 +180,11 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
                 try {
                     scores.add(Integer.parseInt(line.trim()));
                 } catch (NumberFormatException e) {
-                    System.err.println("Skipping invalid score entry: " + line);
+                    // System.err.println("Skipping invalid score entry: " + line);
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error reading best scores file: " + e.getMessage());
+            // System.err.println("Error reading best scores file: " + e.getMessage());
         }
 
         return scores.isEmpty() ? Integer.MAX_VALUE : Collections.min(scores);
@@ -166,45 +234,76 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         p2.setBorder(new EmptyBorder(10, 10, 10, 10));
     }
 
+    // private void updateBestScores(int currentMoves) {
+    //     List<Integer> scores = new ArrayList<>();
+
+    //     // Read existing scores from file
+    //     try (BufferedReader br = new BufferedReader(new FileReader(bestScoresFile))) {
+    //         String line;
+    //         while ((line = br.readLine()) != null) {
+    //             try {
+    //                 scores.add(Integer.parseInt(line.trim()));
+    //             } catch (NumberFormatException e) {
+    //                 System.err.println("Skipping invalid score entry: " + line);
+    //             }
+    //         }
+    //     } catch (IOException e) {
+    //         System.err.println("Error reading best scores file: " + e.getMessage());
+    //     }
+
+    //     // Add current score and sort scores
+    //     scores.add(currentMoves);
+    //     Collections.sort(scores);
+
+    //     // Keep only the top 5 scores
+    //     if (scores.size() > 5) {
+    //         scores = scores.subList(0, 5);
+    //     }
+
+    //     // Write updated scores back to file
+    //     try (BufferedWriter bw = new BufferedWriter(new FileWriter(bestScoresFile))) {
+    //         for (int score : scores) {
+    //             bw.write(String.valueOf(score));
+    //             bw.newLine();
+    //         }
+    //     } catch (IOException e) {
+    //         System.err.println("Error writing to best scores file: " + e.getMessage());
+    //     }
+    //     updateBestScoreLabel();
+    // }
+
     private void updateBestScores(int currentMoves) {
-        List<Integer> scores = new ArrayList<>();
+        Map<String, Integer> bestScores = readBestScores();
 
-        // Read existing scores from file
-        try (BufferedReader br = new BufferedReader(new FileReader(bestScoresFile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                try {
-                    scores.add(Integer.parseInt(line.trim()));
-                } catch (NumberFormatException e) {
-                    System.err.println("Skipping invalid score entry: " + line);
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading best scores file: " + e.getMessage());
+        // Add or update current player's score
+        Integer existingScore = bestScores.get(player);
+        if (existingScore == null || currentMoves < existingScore) {
+            bestScores.put(player, currentMoves);
         }
 
-        // Add current score and sort scores
-        scores.add(currentMoves);
-        Collections.sort(scores);
+        // Sort scores and keep top 5
+        List<Map.Entry<String, Integer>> sortedScores = new ArrayList<>(bestScores.entrySet());
+        sortedScores.sort(Map.Entry.comparingByValue());
 
-        // Keep only the top 5 scores
-        if (scores.size() > 5) {
-            scores = scores.subList(0, 5);
-        }
+        // Ensure directory exists
+        new File(bestScoresFile).getParentFile().mkdirs();
 
-        // Write updated scores back to file
+        // Write updated scores
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(bestScoresFile))) {
-            for (int score : scores) {
-                bw.write(String.valueOf(score));
+            int count = 0;
+            for (Map.Entry<String, Integer> entry : sortedScores) {
+                if (count >= 5) break;
+                bw.write(entry.getKey() + " " + entry.getValue());
                 bw.newLine();
+                count++;
             }
         } catch (IOException e) {
             System.err.println("Error writing to best scores file: " + e.getMessage());
         }
+
+        // Update the display
         updateBestScoreLabel();
     }
-
-
 
     private boolean isSolvable(int[] arr) {
         int inversions = 0;
@@ -246,8 +345,8 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
                 if (ae.getSource() == b[i][j]) {
                     if (isValidMove(i, j)) {
                         movePiece(i, j);
-                        l2.setText("Moves: " + moves);
                         moves++;
+                        l2.setText("Moves: " + moves);
                         if (checkWin()) {
                             endGame("Won");
                         }
@@ -263,7 +362,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         l2.setText("Moves: 0");
         l1.setText(" ");
         shufflePuzzle();
-        updateBestScoreLabel();
+        updateBestScoreLabel(); // Update best score display when starting new game
         gameActive = true;
         statusLabel.setText("Status: Active");
         resignButton.setEnabled(true);
@@ -337,6 +436,6 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new ImagePuzzleGame(args[0],args[1]));
+        SwingUtilities.invokeLater(() -> new ImagePuzzleGame(args[0]));
     }
 }

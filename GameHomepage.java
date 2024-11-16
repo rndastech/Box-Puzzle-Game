@@ -52,10 +52,10 @@ public class GameHomepage extends JFrame {
 
         // Initialize and configure buttons with their respective action listeners
         JButton leaderboardButton = createImageButton("images/leaderboard.png");
-        leaderboardButton.addActionListener(e -> openNewWindow("Leaderboard"));
+        leaderboardButton.addActionListener(e -> showleaderboard());
 
         JButton aboutUsButton = createImageButton("images/aboutus.png");
-        aboutUsButton.addActionListener(e -> openNewWindow("About Us"));
+        aboutUsButton.addActionListener(e -> showaboutus());
 
         JButton gameRulesButton = createImageButton("images/rules.png");
         gameRulesButton.addActionListener(e -> showRules());
@@ -130,7 +130,7 @@ public class GameHomepage extends JFrame {
 
         // Start the game window
         SwingUtilities.invokeLater(() -> {
-            ImagePuzzleGame game = new ImagePuzzleGame(difficulty,"Ritesh");
+            ImagePuzzleGame game = new ImagePuzzleGame(difficulty);
             game.setVisible(true);
         });
     }
@@ -142,6 +142,28 @@ public class GameHomepage extends JFrame {
         // Start the game window
         SwingUtilities.invokeLater(() -> {
             GameRulesPage game = new GameRulesPage();
+            game.setVisible(true);
+        });
+    }
+
+    private void showleaderboard() {
+        // Close the current window
+        this.dispose();
+
+        // Start the game window
+        SwingUtilities.invokeLater(() -> {
+            LeaderboardPage game = new LeaderboardPage();
+            game.setVisible(true);
+        });
+    }
+
+    private void showaboutus() {
+        // Close the current window
+        this.dispose();
+
+        // Start the game window
+        SwingUtilities.invokeLater(() -> {
+            GameAboutUs game = new GameAboutUs();
             game.setVisible(true);
         });
     }
