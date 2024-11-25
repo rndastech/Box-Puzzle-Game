@@ -30,7 +30,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
     String player;
     String bestScoresFile;
     public ImagePuzzleGame(String l) {
-        super("9 Box Image Puzzle");
+        super("9 Box Image Puzzle Game");
         moves = 0;
         level = l;
         bestScoresFile = "Files/"+level+".txt";
@@ -66,7 +66,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
         setLayout(new BorderLayout());
 
         // Set the background image to the same as the home screen
-        BackgroundPanel backgroundPanel = new BackgroundPanel("images/background.jpg");
+        BackgroundPanel backgroundPanel = new BackgroundPanel("Assets/Images/GameLoader/background.jpg");
         setContentPane(backgroundPanel);
 
         p1 = new JPanel(new FlowLayout());
@@ -115,7 +115,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
             emptyImg[0] = ImageIO.read(getClass().getResource("/Assets/Images/question.jpg"));
         } catch (IOException | NullPointerException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error loading images. Please check the file paths.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error loading Assets/Images/GameLoader. Please check the file paths.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
     }
@@ -215,7 +215,7 @@ public class ImagePuzzleGame extends JFrame implements ActionListener {
             }
         } while (!isSolvable(arr));
 
-        // Fill the button array and set images
+        // Fill the button array and set Images
         int k = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {

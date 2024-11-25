@@ -17,7 +17,7 @@ public class Achievements extends JFrame {
         setLocationRelativeTo(null);
         scores = new int[3];
         // Background panel similar to home screen
-        BackgroundPanel backgroundPanel = new BackgroundPanel("images/background.jpg");
+        BackgroundPanel backgroundPanel = new BackgroundPanel("Assets/Images/GameLoader/background.jpg");
         backgroundPanel.setLayout(new BorderLayout());
         setContentPane(backgroundPanel);
         readBestScores();
@@ -28,7 +28,7 @@ public class Achievements extends JFrame {
         JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));  // Left-aligned back button
         backButtonPanel.setOpaque(false);
 
-        JButton backButton = createImageButton("images/back.png", 120, 60);  // Increased dimensions for back button
+        JButton backButton = createImageButton("Assets/Images/GameLoader/back.png", 120, 60);  // Increased dimensions for back button
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,7 +121,6 @@ public class Achievements extends JFrame {
             achievementButton.addActionListener(e -> showAchievementDialog(achievementNumber));
             achievementsPanel.add(achievementButton);
         }
-        System.out.println(scores[0]+" "+scores[1]+" "+scores[2]);
         // Center Layout for Top Panel and Achievements Grid
         backgroundPanel.add(topPanel, BorderLayout.NORTH);  // Add top panel with back button
         backgroundPanel.add(achievementsPanel, BorderLayout.CENTER);  // Add grid in center
@@ -164,16 +163,62 @@ public class Achievements extends JFrame {
     }
 
     private void showAchievementDialog(int achievementNumber) {
-        JDialog achievementDialog = new JDialog(this, "Achievement " + achievementNumber, true);
-        achievementDialog.setSize(300, 200);
+        String[] achievements = {
+                "Easy Starter: Solved Easy level in under 100 moves.",
+                "Easy Challenger: Solved Easy level in under 50 moves.",
+                "Easy Master: Solved Easy level in under 31 moves.",
+                "Medium Rookie: Solved Medium level in under 100 moves.",
+                "Medium Contender: Solved Medium level in under 50 moves.",
+                "Medium Conqueror: Solved Medium level in under 31 moves.",
+                "Hard Explorer: Solved Hard level in under 100 moves.",
+                "Hard Warrior: Solved Hard level in under 50 moves.",
+                "Hard Legend: Solved Hard level in under 31 moves."
+        };
+
+        // Validate achievement number
+        if (achievementNumber < 1 || achievementNumber > achievements.length) {
+            throw new IllegalArgumentException("Invalid achievement number");
+        }
+
+        // Create dialog with professional styling
+        JDialog achievementDialog = new JDialog(this, "Achievement Details", true);
+        achievementDialog.setLayout(new BorderLayout(10, 10));
+        achievementDialog.getContentPane().setBackground(new Color(240, 240, 255));
+
+        // Header label
+        JLabel headerLabel = new JLabel("Achievement Details!", SwingConstants.CENTER);
+        headerLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        headerLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Text area for achievement description
+        JTextArea detailsTextArea = new JTextArea(achievements[achievementNumber - 1]);
+        detailsTextArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        detailsTextArea.setLineWrap(true);
+        detailsTextArea.setWrapStyleWord(true);
+        detailsTextArea.setEditable(false);
+        detailsTextArea.setBackground(new Color(240, 240, 255));
+        detailsTextArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Scroll pane for text area
+        JScrollPane scrollPane = new JScrollPane(detailsTextArea);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        // Close button
+        JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(e -> achievementDialog.dispose());
+
+        // Assemble dialog components
+        achievementDialog.add(headerLabel, BorderLayout.NORTH);
+        achievementDialog.add(scrollPane, BorderLayout.CENTER);
+        achievementDialog.add(closeButton, BorderLayout.SOUTH);
+
+        // Final dialog configuration
+        achievementDialog.setSize(400, 250);
         achievementDialog.setLocationRelativeTo(this);
-
-        JLabel detailsLabel = new JLabel("Details of Achievement " + achievementNumber, SwingConstants.CENTER);
-        detailsLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        achievementDialog.add(detailsLabel);
-
+        achievementDialog.setResizable(false);
         achievementDialog.setVisible(true);
     }
+
 
     private void setAchievementLimitsAndLock() {
         // Define the path to the locked image
@@ -247,7 +292,6 @@ public class Achievements extends JFrame {
                 }
             }
         }
-        System.out.println(scores[0]+" "+scores[1]+" "+scores[2]);
     }
 
     private void readBestScores() {
@@ -258,55 +302,60 @@ public class Achievements extends JFrame {
             int hardMin = Integer.MAX_VALUE;
 
             // Read Easy scores from file
-            BufferedReader easyReader = new BufferedReader(new FileReader("Files/Easy_lead.txt"));
+            BufferedReader easyReader = new BufferedReader(new FileReader("Files/Easy.txt"));
             String line;
             while ((line = easyReader.readLine()) != null) {
-                try {
-                    int score = Integer.parseInt(line.trim());
-                    easyMin = Math.min(easyMin, score); // Track the lowest score
-                } catch (NumberFormatException e) {
-                    // Handle invalid numbers in the file
-                    System.out.println("Invalid score in Easy file: " + line);
+                String[] parts = line.trim().split(" ");
+                if (parts.length == 2) {
+                    try {
+                        int score = Integer.parseInt(parts[1]);
+                        easyMin = Math.min(easyMin, score); // Track the lowest score
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid score in Easy file: " + line);
+                    }
                 }
             }
             easyReader.close();
 
             // Read Medium scores from file
-            BufferedReader mediumReader = new BufferedReader(new FileReader("Files/Medium_lead.txt"));
+            BufferedReader mediumReader = new BufferedReader(new FileReader("Files/Medium.txt"));
             while ((line = mediumReader.readLine()) != null) {
-                try {
-                    int score = Integer.parseInt(line.trim());
-                    mediumMin = Math.min(mediumMin, score); // Track the lowest score
-                } catch (NumberFormatException e) {
-                    // Handle invalid numbers in the file
-                    System.out.println("Invalid score in Medium file: " + line);
+                String[] parts = line.trim().split(" ");
+                if (parts.length == 2) {
+                    try {
+                        int score = Integer.parseInt(parts[1]);
+                        mediumMin = Math.min(mediumMin, score); // Track the lowest score
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid score in Medium file: " + line);
+                    }
                 }
             }
             mediumReader.close();
 
             // Read Hard scores from file
-            BufferedReader hardReader = new BufferedReader(new FileReader("Files/Hard_lead.txt"));
+            BufferedReader hardReader = new BufferedReader(new FileReader("Files/Hard.txt"));
             while ((line = hardReader.readLine()) != null) {
-                try {
-                    int score = Integer.parseInt(line.trim());
-                    hardMin = Math.min(hardMin, score); // Track the lowest score
-                } catch (NumberFormatException e) {
-                    // Handle invalid numbers in the file
-                    System.out.println("Invalid score in Hard file: " + line);
+                String[] parts = line.trim().split(" ");
+                if (parts.length == 2) {
+                    try {
+                        int score = Integer.parseInt(parts[1]);
+                        hardMin = Math.min(hardMin, score); // Track the lowest score
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid score in Hard file: " + line);
+                    }
                 }
             }
             hardReader.close();
+
             scores[0] = easyMin;
             scores[1] = mediumMin;
             scores[2] = hardMin;
-            // Assign the lowest values found for each difficulty
 
         } catch (IOException e) {
             e.printStackTrace();
-            // In case of an error, default to 0 for all scores
+            // In case of an error, default to max value for all scores
             scores[0] = scores[1] = scores[2] = Integer.MAX_VALUE;
         }
-
     }
 
 

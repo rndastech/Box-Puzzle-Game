@@ -41,7 +41,7 @@ public class GameHomepage extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        BackgroundPanel backgroundPanel = new BackgroundPanel("images/background.jpg");
+        BackgroundPanel backgroundPanel = new BackgroundPanel("Assets/Images/GameLoader/background.jpg");
         backgroundPanel.setLayout(new BorderLayout(20, 20));
         setContentPane(backgroundPanel);
 
@@ -51,16 +51,16 @@ public class GameHomepage extends JFrame {
         topPanel.setOpaque(false);
 
         // Initialize and configure buttons with their respective action listeners
-        JButton leaderboardButton = createImageButton("images/leaderboard.png");
+        JButton leaderboardButton = createImageButton("Assets/Images/GameLoader/leaderboard.png");
         leaderboardButton.addActionListener(e -> showleaderboard());
 
-        JButton aboutUsButton = createImageButton("images/aboutus.png");
+        JButton aboutUsButton = createImageButton("Assets/Images/GameLoader/aboutus.png");
         aboutUsButton.addActionListener(e -> showaboutus());
 
-        JButton gameRulesButton = createImageButton("images/rules.png");
+        JButton gameRulesButton = createImageButton("Assets/Images/GameLoader/rules.png");
         gameRulesButton.addActionListener(e -> showRules());
 
-        JButton achievementsButton = createImageButton("images/achievements.png");
+        JButton achievementsButton = createImageButton("Assets/Images/GameLoader/achievements.png");
         achievementsButton.addActionListener(e -> showAchievements());
 
         // Add buttons in order
@@ -75,7 +75,7 @@ public class GameHomepage extends JFrame {
         topWrapper.add(topPanel);
 
         // === Title Label ===
-        JLabel titleLabel = new JLabel(new ImageIcon("images/logo.png"));
+        JLabel titleLabel = new JLabel(new ImageIcon("Assets/Images/GameLoader/logo.png"));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center the image
 
         // === Center Panel ===
@@ -88,16 +88,16 @@ public class GameHomepage extends JFrame {
         levelsPanel.setOpaque(false);
 
         // Create and configure level buttons with their respective action listeners
-        JButton easyButton = createImageButton("images/easy.png");
+        JButton easyButton = createImageButton("Assets/Images/GameLoader/easy.png");
         easyButton.addActionListener(e -> startGame("Easy"));
 
-        JButton mediumButton = createImageButton("images/medium.png");
+        JButton mediumButton = createImageButton("Assets/Images/GameLoader/medium.png");
         mediumButton.addActionListener(e -> startGame("Medium"));
 
-        JButton hardButton = createImageButton("images/hard.png");
+        JButton hardButton = createImageButton("Assets/Images/GameLoader/hard.png");
         hardButton.addActionListener(e -> startGame("Hard"));
 
-        JLabel groupNameLabel = new JLabel(new ImageIcon("images/groupName.png"));
+        JLabel groupNameLabel = new JLabel(new ImageIcon("Assets/Images/GameLoader/groupName.png"));
         groupNameLabel.setHorizontalAlignment(SwingConstants.CENTER);  // Center the image
         levelsPanel.add(groupNameLabel);
 

@@ -19,7 +19,7 @@ public class GameAboutUs extends JFrame {
         setLocationRelativeTo(null);
 
         try {
-            backgroundImage = ImageIO.read(new File("images/background.jpg"));
+            backgroundImage = ImageIO.read(new File("Assets/Images/GameLoader/background.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -47,7 +47,7 @@ public class GameAboutUs extends JFrame {
         topPanel.setOpaque(false);
 
         // Back button
-        backButton = createImageButton("images/back.png", BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT);
+        backButton = createImageButton("Assets/Images/GameLoader/back.png", BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT);
         backButton.addActionListener(e -> {
             dispose();
             new GameHomepage().setVisible(true);
@@ -58,7 +58,7 @@ public class GameAboutUs extends JFrame {
         topPanel.add(backButtonPanel, BorderLayout.WEST);
 
         // Logo
-        JLabel logoLabel = new JLabel(new ImageIcon("images/logo.png"));
+        JLabel logoLabel = new JLabel(new ImageIcon("Assets/Images/GameLoader/logo.png"));
         logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(logoLabel, BorderLayout.CENTER);
 
@@ -70,7 +70,7 @@ public class GameAboutUs extends JFrame {
         // Group Name Panel
         JPanel groupNamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         groupNamePanel.setOpaque(false);
-        JLabel groupNameLabel = new JLabel(new ImageIcon("images/groupName.png"));
+        JLabel groupNameLabel = new JLabel(new ImageIcon("Assets/Images/GameLoader/groupName.png"));
         groupNamePanel.add(groupNameLabel);
         centerPanel.add(groupNamePanel);
         centerPanel.add(Box.createVerticalStrut(10));

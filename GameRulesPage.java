@@ -1,46 +1,85 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 public class GameRulesPage extends JFrame {
     private JButton backButton;
+    private BufferedImage backgroundImage;
+    private static final int BACK_BUTTON_WIDTH = 120;
+    private static final int BACK_BUTTON_HEIGHT = 60;
+    private static final int SECTION_SPACING = 8;
 
     public GameRulesPage() {
-        // Frame setup
-        this.setTitle("Game Rules");
-        this.setSize(1024, 756);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Make sure the window closes properly
-        this.setLocationRelativeTo(null); // Center window
-        this.setLayout(new BorderLayout());
+        setTitle("Game Rules");
+        setSize(1024, 768);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
 
-        // Title bar at the top
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(40, 40, 40));
-        headerPanel.setPreferredSize(new Dimension(this.getWidth(), 60));
-        headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT)); // Align to the left
-        JLabel titleLabel = new JLabel("Game Rules");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
-        titleLabel.setForeground(new Color(255, 204, 0));
-        headerPanel.add(titleLabel);
+        try {
+            backgroundImage = ImageIO.read(new File("Assets/Images/GameLoader/background.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        // Text area for game description
-        JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BorderLayout());
-        contentPanel.setBackground(new Color(50, 50, 50));
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        JTextArea gameRulesText = new JTextArea(
+        JPanel mainPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (backgroundImage != null) {
+                    Graphics2D g2d = (Graphics2D) g;
+                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                            RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+                            RenderingHints.VALUE_RENDER_QUALITY);
+                    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                            RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+        mainPanel.setLayout(new BorderLayout());
+
+        // Top Panel with Back Button and Logo
+        JPanel topPanel = new JPanel(new BorderLayout(10, 0));
+        topPanel.setOpaque(false);
+
+        // Back button
+        backButton = createImageButton("Assets/Images/GameLoader/back.png", BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT);
+        backButton.addActionListener(e -> {
+            dispose();
+            new GameHomepage().setVisible(true);
+        });
+        JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        backButtonPanel.setOpaque(false);
+        backButtonPanel.add(backButton);
+        topPanel.add(backButtonPanel, BorderLayout.WEST);
+
+        // Logo
+        JLabel logoLabel = new JLabel(new ImageIcon("Assets/Images/GameLoader/logo.png"));
+        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(logoLabel, BorderLayout.CENTER);
+
+        // Center Panel containing group name and content
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setOpaque(false);
+
+        // Group Name Panel
+        JPanel groupNamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        groupNamePanel.setOpaque(false);
+        JLabel groupNameLabel = new JLabel(new ImageIcon("Assets/Images/GameLoader/groupName.png"));
+        groupNamePanel.add(groupNameLabel);
+        centerPanel.add(groupNamePanel);
+        centerPanel.add(Box.createVerticalStrut(10));
+
+        // Content Panel
+        JPanel contentPanel = createStyledPanel(600);
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+
+        addSection(contentPanel, "Game Rules",
                 "9-Box Sliding Puzzle Game Rules:\n\n" +
                         "1. Objective: The goal of the game is to rearrange the numbered tiles in ascending order from 1 to 8, with the blank space in the last (bottom-right) position.\n\n" +
                         "2. Game Setup: The puzzle consists of a 3x3 grid containing eight numbered tiles (1 to 8) and one empty space. At the beginning of the game, the tiles are shuffled randomly within the grid, leaving the empty space in a random position.\n\n" +
@@ -51,50 +90,116 @@ public class GameRulesPage extends JFrame {
                         "- Try to work from top-left to bottom-right to systematically arrange the tiles.\n" +
                         "- Focus on solving smaller sections of the puzzle first.\n" +
                         "- Always keep an eye on the empty space and use it to your advantage.\n\n" +
-                        "Good luck, and have fun solving the puzzle!"
-        );
-        gameRulesText.setEditable(false);
-        gameRulesText.setFont(new Font("Arial", Font.PLAIN, 18));
-        gameRulesText.setForeground(new Color(255, 204, 0));
-        gameRulesText.setLineWrap(true);
-        gameRulesText.setWrapStyleWord(true);
-        gameRulesText.setOpaque(false);
-        gameRulesText.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        JScrollPane scrollPane = new JScrollPane(gameRulesText);
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-        contentPanel.add(scrollPane, BorderLayout.CENTER);
+                        "Good luck, and have fun solving the puzzle!");
 
-        // Back button with an image
-        backButton = new JButton();
-        backButton.setIcon(new ImageIcon("./images/back.png")); // Set the image on the button
-        backButton.setPreferredSize(new Dimension(120, 40)); // Set button size, adjust as necessary
-        backButton.setBackground(new Color(80, 80, 80));
-        backButton.setBorder(BorderFactory.createEmptyBorder()); // Remove border
-        backButton.addActionListener(e -> {
-            // Define action on button click (e.g., close current window and open previous)
-            dispose(); // Close the current frame
-            new GameHomepage().setVisible(true); // Uncomment this to navigate to GameHomepage (if exists)
-        });
+        // Wrap contentPanel in a panel with FlowLayout for centering
+        JPanel contentWrapperPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        contentWrapperPanel.setOpaque(false);
+        contentWrapperPanel.add(contentPanel);
 
-        // Panel to hold the back button
-        JPanel topLeftPanel = new JPanel();
-        topLeftPanel.setBackground(new Color(50, 50, 50));
-        topLeftPanel.setLayout(new FlowLayout(FlowLayout.LEFT)); // Align the button to the left
-        topLeftPanel.add(backButton);
+        centerPanel.add(contentWrapperPanel);
 
-        // Add components to the frame
-        this.add(headerPanel, BorderLayout.NORTH); // Add title to the top
-        this.add(contentPanel, BorderLayout.CENTER); // Add the content panel with rules
-        this.add(topLeftPanel, BorderLayout.NORTH); // Add the back button panel to the top-left
+        // Add panels to main panel
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
 
-        // Set frame visibility
-        this.setVisible(true);
+        // Add padding around the main panel
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        setContentPane(mainPanel);
     }
 
-    public static void main(String[] var0) {
+    private JPanel createStyledPanel(int width) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(true);
+        panel.setBackground(new Color(245, 245, 220, 255));  // Semi-transparent beige
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 34, 68), 2),
+                BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        panel.setPreferredSize(new Dimension(width, 500));
+        panel.setMaximumSize(new Dimension(width, 500));
+        return panel;
+    }
+
+    private void addSection(JPanel container, String title, String content) {
+        if (container.getComponentCount() > 0) {
+            container.add(Box.createVerticalStrut(SECTION_SPACING));
+            container.add(new JSeparator());
+            container.add(Box.createVerticalStrut(SECTION_SPACING));
+        }
+
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setForeground(new Color(0, 34, 68));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        container.add(titleLabel);
+        container.add(Box.createVerticalStrut(5));
+
+        JTextArea textArea = new JTextArea(content);
+        textArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        textArea.setForeground(new Color(0, 34, 68));
+        textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(true);
+        textArea.setOpaque(false);
+        textArea.setEditable(false);
+        textArea.setFocusable(false);
+        textArea.setMargin(new Insets(2, 5, 2, 5));
+        textArea.setAlignmentX(Component.CENTER_ALIGNMENT);
+        container.add(textArea);
+    }
+
+    private JButton createImageButton(String imagePath, int targetWidth, int targetHeight) {
+        JButton button = new JButton();
+        try {
+            BufferedImage originalImage = ImageIO.read(new File(imagePath));
+            BufferedImage scaledImage = new BufferedImage(targetWidth, targetHeight,
+                    BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = scaledImage.createGraphics();
+
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+                    RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+
+            g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+            g2d.dispose();
+
+            button.setIcon(new ImageIcon(scaledImage));
+            button.setPreferredSize(new Dimension(targetWidth, targetHeight));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+
+        return button;
+    }
+
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new GameRulesPage();
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            new GameRulesPage().setVisible(true);
         });
     }
 }

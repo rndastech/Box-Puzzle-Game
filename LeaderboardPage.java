@@ -64,7 +64,7 @@ public class LeaderboardPage extends JFrame {
         headerPanel.add(currentDifficultyLabel, BorderLayout.CENTER);
 
         // Back Button with custom size
-        JButton backButton = createImageButton("images/back.png", BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT);
+        JButton backButton = createImageButton("Assets/Images/GameLoader/back.png", BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT);
         backButton.addActionListener(e -> {
             dispose();
             new GameHomepage();
@@ -76,9 +76,9 @@ public class LeaderboardPage extends JFrame {
         buttonPanel.setOpaque(false);
 
         // Mode Buttons with default size
-        JButton easyButton = createImageButton("images/easy.png", null, null);
-        JButton mediumButton = createImageButton("images/medium.png", null, null);
-        JButton hardButton = createImageButton("images/hard.png", null, null);
+        JButton easyButton = createImageButton("Assets/Images/GameLoader/easy.png", null, null);
+        JButton mediumButton = createImageButton("Assets/Images/GameLoader/medium.png", null, null);
+        JButton hardButton = createImageButton("Assets/Images/GameLoader/hard.png", null, null);
 
         // Add action listeners
         easyButton.addActionListener(e -> displayLeaderboard(easyData, "Easy Mode"));
@@ -345,7 +345,7 @@ public class LeaderboardPage extends JFrame {
 
         public BackgroundPanel() {
             try {
-                backgroundImage = ImageIO.read(new File("images/background.jpg"));
+                backgroundImage = ImageIO.read(new File("Assets/Images/GameLoader/background.jpg"));
             } catch (IOException e) {
                 // Use gradient background if image fails to load
                 backgroundImage = null;
